@@ -33,16 +33,16 @@ public abstract class Character implements Serializable {
 		return gold;
 	}	
 	public void increaseLevel(){
-		
+		level++;
 	}
 	public void heal(int h){
-		
+		hp += h;
 	}
-	public void takeDamage(int g){
-		
+	public void takeDamage(int h){
+		hp -= h;
 	}
 	public void collectGold(int g){
-		
+		gold +=g;
 	}
 	public void display(){
 		

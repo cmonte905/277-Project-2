@@ -10,16 +10,28 @@ public class mainGame {
 		Level l = new Level();
 		l.generateLevel(1);
 		l.displayMap();
+		
+		
+		itemGenerator iG = new itemGenerator();
+		Item item = iG.generateItem();
+		
+		System.out.println(item.getName() +" " + item.getValue());
+		
 		EnemyGenerator eL = new EnemyGenerator();
-		System.out.println(eL.generateEnemy(1).getName());
+		Enemy en = eL.generateEnemy(1);
+		System.out.println(en.getName()+" " + en.getHp()+" " + en.getQuip());
+		
 		Scanner in = new Scanner(System.in);
 		System.out.println("Where would you like to move?");
 		System.out.println("1: NORTH");
 		System.out.println("2: EAST");
 		System.out.println("3: SOUTH");
 		System.out.println("4: WEST");
+		int userDir;
 		
 		try{
+			
+			userDir = in.nextInt();
 			
 		}catch(InputMismatchException i){
 			

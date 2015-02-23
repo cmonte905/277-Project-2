@@ -8,30 +8,23 @@ public class itemGenerator {
 	public itemGenerator() {
 
 		try {
-			Scanner read = new Scanner(new File("ItemList1.txt"));
-			do {
-				read.useDelimiter(",");
-				String itemName = read.next();
-				System.out.println(itemName);
-
-				String gValue = read.next();
-				System.out.println(gValue);
-				int value = Integer.parseInt(gValue);
-				System.out.println(value);
-
-				// Item i = new Item(itemName, gValue);
-				// itemList.add(i);
-			} while (read.hasNext());
-
+			Scanner read = new Scanner(new File("ItemList.txt"));			
+			while (read.hasNext()){
+				String[] item = read.nextLine().split(",");
+						
+				Item i = new Item(item[0],Integer.parseInt(item[1]));
+				itemList.add(i);
+			} 
 			read.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("Could not find file");
 		}
 	}
 
-	public ArrayList<Item> generateItem() {
-
-		return itemList;
+	public Item generateItem() {
+		Random rand = new Random();
+ 		int randItem = rand.nextInt(itemList.size());
+ 		return (Item)itemList.get(randItem);
 	}
 
 }
