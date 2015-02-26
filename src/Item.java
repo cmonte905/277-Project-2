@@ -1,20 +1,40 @@
 import java.io.Serializable;
 
-
-public class Item implements Serializable{
+/**
+ * Class in which the items are handled
+ */
+public class Item implements Serializable {
 	private String name;
 	private int goldValue;
-	
-	public Item(String n, int v){
+
+	/**
+	 * Constructor of items
+	 * 
+	 * @param n
+	 *            Name of item
+	 * @param v
+	 *            Gold have of item
+	 */
+	public Item(String n, int v) {
 		this.name = n;
-		this.goldValue =v;
+		this.goldValue = v;
 	}
-	
-	public String getName(){
+
+	/**
+	 * Method that returns the name of an item
+	 * 
+	 * @return name
+	 */
+	public String getName() {
 		return name;
 	}
-	
-	public int getValue(){
+
+	/**
+	 * Method that returns the gold value of an item
+	 * 
+	 * @return
+	 */
+	public int getValue() {
 		return goldValue;
 	}
 }
