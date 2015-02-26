@@ -8,19 +8,16 @@ public class Enemy extends Character {
 		super(n, q, h, l, g);
 		this.item = i;
 	}
-
+	@Override
 	public void attack(Character c) {
-
+		Random rand = new Random();
+		int damage = rand.nextInt(5 * c.getLevel()+1);
+		System.out.printf("%s hit a %s for %d damage.%n",getName(),c.getName(),damage);
+		c.takeDamage(damage);
 	}
 
-	// returns the item that enemy has dropped, my guess anyways
+
 	public Item getItem() {
-		EnemyGenerator EG = new EnemyGenerator();
-		Enemy e = EG.generateEnemy(1);
-		if (e.getHp() < 0) {
-			return item;
-		} else
-			return null;
+		return item;
 	}
-
 }

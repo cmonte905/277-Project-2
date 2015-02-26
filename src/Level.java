@@ -26,26 +26,41 @@ public class Level implements Serializable {
 	}
 
 	public char getRoom(Point p) {
-		return 0;
-
+		char room;
+		room = level[p.y][p.x];
+		return room;
 	}
 
-	public void displayMap() {// Point p as parameter
+	public void displayMap(Point p) {// Point p as parameter
 		System.out.println("-----------");
-		for (int i = 0; i < 4; i++) {	
+		for (int i = 0; i < 4; i++) {
 			System.out.print("| ");
 			for (int j = 0; j < 4; j++) {
-				System.out.print(level[i][j] + " ");
+				if (p.getX() == j && p.getY() == i) {
+					System.out.print("* ");
+				} else
+					System.out.print(level[i][j] + " ");
 
 			}
 			System.out.print("| \n");
 		}
 		System.out.println("-----------");
+
 	}
 
 	public Point findStartLocation() {
-		return null;
-
+		if(level[0].length < 1){
+			System.out.println("Level not yet genereated!");
+			return new Point(0,0);
+		}
+		for(int i = 0; i < level.length; i++){
+			for(int ii = 0; ii < level[i].length; ii++){
+				if(level[i][ii] == 's'){
+					return new Point(ii,i);
+				}
+			}
+		}
+		return new Point(0,0);
 	}
 
 }
