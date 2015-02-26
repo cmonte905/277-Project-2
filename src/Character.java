@@ -4,7 +4,7 @@ import java.io.Serializable;
 public abstract class Character implements Serializable {
 	private String name;
 	private String quip;
-	private static int level;
+	private int level;
 	private int hp;
 	private int gold;
 	
@@ -45,6 +45,6 @@ public abstract class Character implements Serializable {
 		gold +=g;
 	}
 	public void display(){
-		
+		System.out.println( "Name: " + name + "\nHealth Points: " + hp + " \nLevel: " + level + "\nGold: " + gold);
 	}
 }

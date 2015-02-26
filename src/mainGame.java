@@ -6,8 +6,6 @@ public class mainGame {
 	private static File characterDat = new File("character.dat");
 	private static int x;
 	private static int y;
-	Hero hero = null;
-	Level map = null;
 
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws FileNotFoundException {
@@ -24,7 +22,7 @@ public class mainGame {
 				ObjectInputStream intoFile = new ObjectInputStream(
 						new FileInputStream(characterDat));
 				hero = (Hero) intoFile.readObject();
-				in.close();
+				intoFile.close();
 				/*System.out.println("TESTLINE PLEASE IGNORE\nNAME: "
 						+ player.getName() + "\nHEALTH: " + player.getHp()
 						+ "\nLEVEL: " + player.getLevel() + "\nGOLD: "
@@ -34,17 +32,20 @@ public class mainGame {
 			} catch (ClassNotFoundException e) {
 				System.out.println("Could not find the class!");
 			}
+			l = new Level();
+			l.generateLevel(hero.getLevel());
 		}
 		else{
 			System.out.println("What is your name hero?");
 			String name = in.next();
 			l = new Level();
 			hero = new Hero(name, "meh", 20, 1, 0, p);
+			l.generateLevel(1);
 		}
 		
 		
 
-		l.generateLevel(1);
+		
 
 		hero.setLocation(l.findStartLocation());
 		l.displayMap(hero.getLocation());
@@ -55,7 +56,8 @@ public class mainGame {
 			System.out.println("2: EAST");
 			System.out.println("3: SOUTH");
 			System.out.println("4: WEST");
-			int userDir = checkInt(1, 4);
+			System.out.println("5: Display status");
+			int userDir = checkInt(1, 5);
 
 			char room;
 			switch (userDir) {
@@ -67,7 +69,7 @@ public class mainGame {
 				} else {
 					hero.setLocation(new Point(x, y--));
 					room = hero.goNorth(l);
-					mg.checkPosition(room);
+					mg.checkPosition(room, hero, l);
 					break;
 				}
 
@@ -78,7 +80,7 @@ public class mainGame {
 				} else {
 					hero.setLocation(new Point(x++, y));
 					room = hero.goEast(l);
-					mg.checkPosition(room);
+					mg.checkPosition(room, hero, l);
 				}
 				break;
 
@@ -89,7 +91,7 @@ public class mainGame {
 				} else {
 					hero.setLocation(new Point(x, y++));
 					room = hero.goSouth(l);
-					mg.checkPosition(room);
+					mg.checkPosition(room, hero, l);
 				}
 				break;
 			case 4:
@@ -99,15 +101,23 @@ public class mainGame {
 				} else {
 					hero.setLocation(new Point(x--, y));
 					room = hero.goWest(l);
-					mg.checkPosition(room);
+					mg.checkPosition(room, hero, l);
 					break;
 				}
+				case 5: hero.display();
+				break;
 			}
+			
 			hero.setLocation(new Point(x, y));
 			l.displayMap(new Point(x, y));
 		}
 	}
-
+	/**
+	 * LoadChar writes the users character in to the dat file
+	 * @param player
+	 * @param map
+	 * @return
+	 */
 	static Hero loadChar(Hero player, Level map) {
 		Scanner in = new Scanner(System.in);
 
@@ -232,33 +242,38 @@ public class mainGame {
 				}
 			} else {
 				// clear buffer of junk input
-				in.next();
+				try{
+					in.next();
+				}catch(NoSuchElementException i){
+					System.out.println(" ..........");
+				}
+				
 				System.out.println("Invalid input! Please try again! ");
 			}
 		}
 		return validNum;
 	}
 
-	void checkPosition(char room)
+	void checkPosition(char room, Hero player, Level map)
 			throws FileNotFoundException {
 
 		switch (room) {
 
 		case 'm':
-			Enemy enemy = new EnemyGenerator().generateEnemy(hero.getLevel());
+			Enemy enemy = new EnemyGenerator().generateEnemy(player.getLevel());
 			System.out.print("You ran into " + enemy.getName()
 					+ "!\nPrepare to fight!");
-			combat(hero, enemy);
+			combat(player, enemy);
 
 			break;
 		case 'i':
 			Item item = new itemGenerator().generateItem();
-			if (hero.getInventory() >= 5) {
+			if (player.getInventory() >= 5) {
 				System.out.println("Your bags are too full for "
 						+ item.getName() + ".");
 
 			} else {
-				hero.pickupItem(item);
+				player.pickupItem(item);
 				System.out.println("You picked up " + item.getName() + ".");
 			}
 			break;
@@ -266,41 +281,41 @@ public class mainGame {
 			//mainGame mg = new mainGame();
 			//mg.loadChar(player, map);
 			System.out.println(room);
-			System.out.println(hero.getLevel());
-			hero.increaseLevel();
+			System.out.println(player.getLevel());
+			player.increaseLevel();
 
-			System.out.println(hero.getLevel() + " is players level");
-			map.generateLevel(hero.getLevel());
-			//x = 0;
-			//y = 3;
-			hero.setLocation(map.findStartLocation());
-			map.displayMap(hero.getLocation());
-			//map.getRoom(new Point(x, y));
+			System.out.println(player.getLevel() + " is players level");
+			map.generateLevel(player.getLevel());
+			x = 0;
+			y = 3;
+			player.setLocation(map.findStartLocation());
+			map.displayMap(player.getLocation());
+			map.getRoom(new Point(x, y));
 			
 			try {
 				ObjectOutputStream out = new ObjectOutputStream(
 						new FileOutputStream(characterDat));
-				out.writeObject(hero);
+				out.writeObject(player);
 				out.close();
 			} catch (IOException e) {
 				System.out.println("Error processing the save.");
 			}
 			break;
 		case 's':
-			if (hero.getInventory() < 0) {
+			if (player.getInventory() < 0) {
 				System.out.println("There are no items in your inventory");
 			} else {
 				System.out
 						.println("This is your inventory. Which one would you like to sell?");
-				for (int i = 0; i < hero.getInventory(); i++) {
-					System.out.printf("%d. %s%n", (i + 1), hero.getItems()
+				for (int i = 0; i < player.getInventory(); i++) {
+					System.out.printf("%d. %s%n", (i + 1), player.getItems()
 							.get(i).getName());
 				}
 				System.out.println("6: none");
 				int sellItem = checkInt(1, 5);
 				if (sellItem <= 5) {
-					hero.collectGold(hero.getItems().get(sellItem-1).getValue());
-					hero.removeItem(sellItem-1);
+					player.collectGold(player.getItems().get(sellItem-1).getValue());
+					player.removeItem(sellItem-1);
 				}
 
 				break;
